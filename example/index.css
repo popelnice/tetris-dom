@@ -1,0 +1,86 @@
+* {
+  box-sizing: border-box;
+}
+
+#blocks {
+  width: 100%;
+  height: 100%;
+}
+
+#next {
+  width: 85px;
+  height: 85px;
+  margin: 0 auto;
+}
+
+.block.filled {
+  border-color: #000;
+}
+
+.block.filled::after {
+  background-color: #000;
+}
+
+.block {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #8e9d76;
+  float: left;
+  margin: 0 1px 1px 0;
+}
+
+.block::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  content: "";
+  margin-top: -7px;
+  margin-left: -7px;
+  background-color: #8e9d76;
+}
+
+.tetris {
+  width: 350px;
+  height: 435px;
+  padding: 5px;
+  margin: 0 auto;
+  font-size: 14px;
+  background-color: #9ead86;
+  display: flex;
+}
+
+.tetris > .section {
+  width: 215px;
+  height: 425px;
+  border: 2px solid #000;
+  margin-right: 10px;
+}
+
+.tetris > .panel {
+  flex: 1;
+}
+
+.tetris > .panel > .status {
+}
+
+.tetris > .panel > .status > .status-item {
+  margin-bottom: 10px;
+}
+
+.tetris > .panel > .status > .status-item > .title {
+  margin-bottom: 10px;
+}
+
+.tetris > .panel > .status > .status-item > .content {
+  text-align: right;
+}
+
+.tetris > .panel > .action {
+  text-align: center;
+}
+
+.tetris > .panel > .action > button {
+}

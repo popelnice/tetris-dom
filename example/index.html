@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tetris</title>
+    <link rel="stylesheet" type="text/css" href="./index.css" />
+  </head>
+  <body>
+    <div class="tetris">
+      <div class="section">
+        <div id="blocks"></div>
+      </div>
+      <div class="panel">
+        <div class="status">
+          <div class="status-item score">
+            <div class="title">HI-SCORE</div>
+            <div id="score" class="content">0</div>
+          </div>
+          <div class="status-item lines">
+            <div class="title">LINES</div>
+            <div id="lines" class="content">0</div>
+          </div>
+          <div class="status-item level">
+            <div class="title">LEVEL</div>
+            <div id="level" class="content">1</div>
+          </div>
+          <div class="status-item next">
+            <div class="title">NEXT</div>
+            <div class="content">
+              <div id="next"></div>
+            </div>
+          </div>
+        </div>
+        <div class="action">
+          <button id="start">开始</button>
+          <button id="restart">重新开始</button>
+        </div>
+      </div>
+    </div>
+    <script src="../src/shape.js"></script>
+    <script src="../src/boundary.js"></script>
+    <script src="../src/drawer.js"></script>
+    <script src="../src/tetris.js"></script>
+    <script>
+      const tetris = new Tetris({
+        game: {
+          blocks: "blocks",
+        },
+        panel: {
+          score: "score",
+          lines: "lines",
+          level: "level",
+          next: "next",
+        },
+      });
+      document.getElementById("start").addEventListener(
+        "click",
+        (e) => {
+          if (tetris.isPaused) {
+            e.target.innerText = "开始";
+            tetris.pause();
+          } else {
+            e.target.innerText = "暂停";
+            tetris.start();
+          }
+        },
+        false
+      );
+      document.getElementById("restart").addEventListener(
+        "click",
+        (e) => {
+          tetris.restart();
+        },
+        false
+      );
+    </script>
+  </body>
+</html>
