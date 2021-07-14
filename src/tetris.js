@@ -1,22 +1,3 @@
-const NEXT_ROWS = 4;
-const NEXT_COLUMNS = 4;
-
-const BLOCKS_ROWS = 20;
-const BLOCKS_COLUMNS = 10;
-
-const PER_LINE_SCORE = 10;
-
-const SCORE_INTERVALS = {
-  500: 750,
-  1000: 700,
-  1500: 650,
-  2000: 600,
-  3500: 550,
-  4000: 500,
-  4500: 450,
-  5000: 400,
-};
-
 const defaultOpts = {
   game: {
     blocks: "blocks",
@@ -45,7 +26,7 @@ function createBlocks(rows, columns, parent, suffix) {
 }
 
 class Tetris {
-  isPaused = false;
+  isPaused = true;
   isEnded = false;
 
   timer = null;
@@ -55,7 +36,7 @@ class Tetris {
   score = 0;
   lines = 0;
   level = 1;
-  interval = 100;
+  interval = INI_INTERVAL;
 
   constructor(opts = {}) {
     this.options = Object.assign({}, defaultOpts, opts);
@@ -71,25 +52,9 @@ class Tetris {
 
     this.drawer = new Drawer(this);
     this.boundary = new Boundary(this);
-    // this.controller = new Controller(this);
+    this.controller = new Controller(this);
 
     this.initBlocks();
-  }
-
-  containFilled(id) {
-    return document.getElementById(id).getAttribute("class").includes("filled");
-  }
-
-  addFilled(id) {
-    const node = document.getElementById(id);
-    const className = node.getAttribute("class");
-    node.setAttribute("class", `${className} filled`);
-  }
-
-  removeFilled(id) {
-    const node = document.getElementById(id);
-    const className = node.getAttribute("class");
-    node.setAttribute("class", `${className.replace(/\sfilled/g, "")}`);
   }
 
   initBlocks() {
@@ -110,55 +75,55 @@ class Tetris {
     }
 
     // 判断触底
-    if (this.boundary.isReachBottom()) {
-      this.current = Object.create(this.next);
-      this.current.x = 6;
-      this.drawer.drawBlock(this.current);
-      this.drawer.clearNext(this.next);
-      this.next = createShape(2, 2);
-      this.drawer.drawNext(this.next);
-      //   // 消行
-      //   if (this.boundary.canClearLines()) {
-      //     const clearLines = this.boundary.getClearLines();
-      //     this.score += clearLines * PER_LINE_SCORE;
-      //     this.drawer.clearLines();
-      //   }
-      //   // 结束游戏
-      //   if (this.boundary.isEndGame()) {
-      //     this.end();
-      //     // 下一轮循环
-      //   } else {
-      //     this.current = this.next;
-      //     this.current.x = 5;
-      //     this.drawer.drawBlock(this.current);
-      //     this.drawer.clearNext(this.next);
-      //     this.next = createShape(2, 2);
-      //     this.drawer.drawNext(this.next);
-      //   }
-      //   // 如果没触底，则重绘下移之后的当前图形
-    } else {
+    if (this.boundary.canMoveDown()) {
       this.drawer.clearBlock(this.current);
       this.current.down();
       this.drawer.drawBlock(this.current);
+    } else {
+      // 消行
+      if (this.boundary.canClearLines()) {
+        const clearLines = this.boundary.getClearLines();
+        this.score += clearLines * PER_LINE_SCORE;
+        this.drawer.clearLines();
+      }
+
+      // 结束游戏
+      if (this.boundary.isEndGame()) {
+        this.end();
+        // 下一轮循环
+      } else {
+        this.drawer.drawShape(this.current);
+
+        this.current = Object.create(this.next);
+        this.current.x = 6;
+        this.drawer.drawBlock(this.current);
+
+        this.drawer.clearNext(this.next);
+        this.next = createShape(2, 2);
+        this.drawer.drawNext(this.next);
+      }
     }
   }
 
   start() {
-    if (this.isEnded) return;
+    if (this.isEnded || !this.isPaused) return;
     this.isPaused = false;
     this.game();
+    this.controller.addEvent();
     this.timer = setInterval(this.game.bind(this), this.interval);
   }
 
   pause() {
-    if (this.isEnded) return;
+    if (this.isEnded || this.isPaused) return;
     this.isPaused = true;
+    this.controller.removeEvent();
     clearInterval(this.timer);
   }
 
   end() {
     alert("游戏结束");
     this.isEnded = true;
+    this.controller.removeEvent();
     clearInterval(this.timer);
   }
 
@@ -169,13 +134,13 @@ class Tetris {
     this.drawer.clearAll();
     // 重置所有参数
     this.isEnded = false;
-    this.isPaused = false;
+    this.isPaused = true;
     this.current = null;
     this.next = null;
     this.score = 0;
     this.lines = 0;
     this.level = 1;
-    this.interval = 100;
+    this.interval = INI_INTERVAL;
     // 开始游戏
     this.start();
   }

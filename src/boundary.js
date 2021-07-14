@@ -1,28 +1,74 @@
+function isOutOfBorder(shape) {
+  const shapes = shape
+    .getShapes()
+    .filter(([x, y]) => !document.getElementById(`blocks_${x}_${y}`));
+  return shapes.length !== 0;
+}
+
+function isTouchBlocks(shape) {
+  const shapes = shape
+    .getShapes()
+    .filter(([x, y]) => hasClassName(`blocks_${x}_${y}`, "fill"));
+  return shapes.length !== 0;
+}
+
 class Boundary {
   constructor(tetris) {
     this.tetris = tetris;
   }
 
-  isReachBottom() {
-    const shape = this.tetris.current;
-    // 判断是否接触到边界底部
-    const outerShapes = shape
-      .getShapes()
-      .filter(([x, y]) => !document.getElementById(`blocks_${x}_${y + 1}`));
-    if (outerShapes.length) return true;
-    // 判断碰撞
-    const bottomShapes = shape
-      .getShapes()
-      .filter(([x, y]) => !this.tetris.containFilled(`blocks_${x}_${y + 1}`));
-    const blockedShapes = bottomShapes.filter(([x, y]) =>
-      this.tetris.containFilled(`blocks_${x}_${y + 1}`)
-    );
-    return blockedShapes.length !== 0;
+  canMoveLeft() {
+    const shape = Object.create(this.tetris.current);
+    shape.x -= 1;
+    return !(isOutOfBorder(shape) || isTouchBlocks(shape));
   }
 
-  canClearLines() {}
+  canMoveRight() {
+    const shape = Object.create(this.tetris.current);
+    shape.x += 1;
+    return !(isOutOfBorder(shape) || isTouchBlocks(shape));
+  }
 
-  getClearLines() {}
+  canMoveDown() {
+    const shape = Object.create(this.tetris.current);
+    shape.y += 1;
+    return !(isOutOfBorder(shape) || isTouchBlocks(shape));
+  }
+
+  canTransform() {
+    const shape = Object.create(this.tetris.current);
+    shape.transform();
+    return !(isOutOfBorder(shape) || isTouchBlocks(shape));
+  }
+
+  canClearLines() {
+    let clearColumns = 0;
+    for (let y = BLOCKS_ROWS; y > 0; y--) {
+      clearColumns = 0;
+      for (let x = BLOCKS_COLUMNS; x > 0; x--) {
+        if (hasClassName(`blocks_${x}_${y}`, "fill")) clearColumns++;
+      }
+      if (clearColumns === BLOCKS_COLUMNS) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  getClearLines() {
+    let clearColumns = 0;
+    let clearLines = 0;
+    for (let y = BLOCKS_ROWS; y > 0; y--) {
+      clearColumns = 0;
+      for (let x = BLOCKS_COLUMNS; x > 0; x--) {
+        if (hasClassName(`blocks_${x}_${y}`, "fill")) clearColumns++;
+      }
+      if (clearColumns === BLOCKS_COLUMNS) {
+        clearLines++;
+      }
+    }
+    return clearLines;
+  }
 
   isEndGame() {}
 }

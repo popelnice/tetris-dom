@@ -1,14 +1,14 @@
-function toggleFilled(tetris, shape, suffix, isFilled) {
+function toggleShape(shape, suffix, isShape) {
   shape.getShapes().forEach(([x, y]) => {
     const id = `${suffix}_${x}_${y}`;
-    const containerFilled = tetris.containFilled(id);
-    if (isFilled) {
-      if (!containerFilled) {
-        tetris.addFilled(id);
+    const hasShape = hasClassName(id, "shape");
+    if (isShape) {
+      if (!hasShape) {
+        addClassName(id, "shape");
       }
     } else {
-      if (containerFilled) {
-        tetris.removeFilled(id);
+      if (hasShape) {
+        removeClassName(id, "shape");
       }
     }
   });
@@ -26,19 +26,27 @@ class Drawer {
   }
 
   clearBlock(shape) {
-    toggleFilled(this.tetris, shape, "blocks", false);
+    toggleShape(shape, "blocks", false);
   }
 
   drawBlock(shape) {
-    toggleFilled(this.tetris, shape, "blocks", true);
+    toggleShape(shape, "blocks", true);
   }
 
   clearNext(shape) {
-    toggleFilled(this.tetris, shape, "next", false);
+    toggleShape(shape, "next", false);
   }
 
   drawNext(shape) {
-    toggleFilled(this.tetris, shape, "next", true);
+    toggleShape(shape, "next", true);
+  }
+
+  drawShape(shape) {
+    shape.getShapes().forEach(([x, y]) => {
+      const id = `blocks_${x}_${y}`;
+      removeClassName(id, "shape");
+      addClassName(id, "fill");
+    });
   }
 
   clearLines() {}

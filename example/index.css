@@ -13,11 +13,13 @@
   margin: 0 auto;
 }
 
-.block.filled {
+.block.fill,
+.block.shape {
   border-color: #000;
 }
 
-.block.filled::after {
+.block.fill::after,
+.block.shape::after {
   background-color: #000;
 }
 
@@ -63,9 +65,6 @@
   flex: 1;
 }
 
-.tetris > .panel > .status {
-}
-
 .tetris > .panel > .status > .status-item {
   margin-bottom: 10px;
 }
@@ -80,7 +79,4 @@
 
 .tetris > .panel > .action {
   text-align: center;
-}
-
-.tetris > .panel > .action > button {
 }

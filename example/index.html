@@ -35,13 +35,16 @@
         </div>
         <div class="action">
           <button id="start">开始</button>
+          <button id="pause">暂停</button>
           <button id="restart">重新开始</button>
         </div>
       </div>
     </div>
+    <script src="../src/utils.js"></script>
     <script src="../src/shape.js"></script>
     <script src="../src/boundary.js"></script>
     <script src="../src/drawer.js"></script>
+    <script src="../src/controller.js"></script>
     <script src="../src/tetris.js"></script>
     <script>
       const tetris = new Tetris({
@@ -58,13 +61,14 @@
       document.getElementById("start").addEventListener(
         "click",
         (e) => {
-          if (tetris.isPaused) {
-            e.target.innerText = "开始";
-            tetris.pause();
-          } else {
-            e.target.innerText = "暂停";
-            tetris.start();
-          }
+          tetris.start();
+        },
+        false
+      );
+      document.getElementById("pause").addEventListener(
+        "click",
+        (e) => {
+          tetris.pause();
         },
         false
       );
